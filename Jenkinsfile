@@ -29,7 +29,7 @@ pipeline {
                 echo 'Deploying and cleaning'
                 sh 'docker container stop flocalbrandfeweb || echo "this container does not exist" '
                 sh 'echo y | docker system prune '
-                sh 'docker container run -d --rm --name flocalbrandfeweb -p 83:80  chalsfptu/flocalbrandfeweb '
+                sh 'docker container run -d --rm --name flocalbrandfeweb -p 3000:3000  chalsfptu/flocalbrandfeweb '
             }
         }
         
