@@ -75,7 +75,7 @@ export function LoginForm() {
         <div className='mb-12'>
           <h3 className='text-3xl font-extrabold'>Sign in</h3>
           <p className='text-sm mt-4 '>
-            Don't have an account{' '}
+            Don&apos;t have an account{' '}
             {session && session.user ? (
               <div className='flex gap-4 ml-auto'>
                 <p className='text-sky-600'>{session.user.name}</p>
