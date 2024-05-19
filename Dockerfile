@@ -1,10 +1,21 @@
 FROM node:alpine AS deps
 
+
+ARG GOOGLE_CLIENT_SECRET
+ARG GOOGLE_CLIENT_ID
+ARG SECRET_KEY
+
+
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV SECRET_KEY=$SECRET_KEY
+
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
+ENV key=value
 
 # Rebuild the source code only when needed
 FROM node:alpine AS builder

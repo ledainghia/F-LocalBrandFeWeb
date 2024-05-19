@@ -9,7 +9,7 @@ pipeline {
 
             steps {
                 
-                sh 'docker build --pull --rm -f Dockerfile -t flocalbrandfeweb:latest .'
+                sh 'docker build --build-arg GOOGLE_CLIENT_ID=610543027503-gl1mjkhsfmsjs2mer7ck41ceoqq9ifjf.apps.googleusercontent.com --build-arg CLIENT_SECRET=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 --build-arg SECRET_KEY=adjkasdbyua --pull --rm -f Dockerfile -t flocalbrandfeweb:latest .'
                 
             }
         }
