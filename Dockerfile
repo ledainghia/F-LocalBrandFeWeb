@@ -1,21 +1,17 @@
 FROM node:alpine AS deps
 
 
-ARG GOOGLE_CLIENT_SECRET
-ARG GOOGLE_CLIENT_ID
-ARG SECRET_KEY
 
 
-ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-ENV SECRET_KEY=$SECRET_KEY
+
+
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-ENV key=value
+
 
 # Rebuild the source code only when needed
 FROM node:alpine AS builder
@@ -38,7 +34,14 @@ RUN yarn build
 FROM node:alpine AS runner
 WORKDIR /app
 
+ARG GOOGLE_CLIENT_SECRET
+ARG GOOGLE_CLIENT_ID
+ARG SECRET_KEY
+
 ENV NODE_ENV production
+# ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+# ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+# ENV SECRET_KEY=$SECRET_KEY
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 COPY --from=builder /app/public ./public
