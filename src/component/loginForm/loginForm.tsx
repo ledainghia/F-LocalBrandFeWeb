@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,13 +18,12 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { primaryColor } from '@/helper/style';
 import { cn } from '@/lib/utils';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { CiMail } from 'react-icons/ci';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
-import { useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { FcGoogle } from 'react-icons/fc';
-import Link from 'next/link';
-import { useSession, signIn, signOut } from 'next-auth/react';
 
 const FormSchema = z.object({
   username: z.string().min(2, {
