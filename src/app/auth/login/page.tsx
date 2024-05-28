@@ -1,9 +1,7 @@
 'use client';
 
 import { LoginForm } from '@/component/loginForm/loginForm';
-import { Button } from '@/components/ui/button';
 import { primaryColor } from '@/helper/style';
-import { cn } from '@/lib/utils';
 
 export default function page() {
   return (

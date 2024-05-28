@@ -66,8 +66,8 @@ export function LoginForm() {
     signIn('google');
   }
 
-  const { data: session } = useSession();
-  console.log(session);
+  const { data: session, status } = useSession();
+  console.log(session, status);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full space-y-6'>
@@ -97,10 +97,10 @@ export function LoginForm() {
           name='username'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username or mail</FormLabel>
+              <FormLabel>Mail</FormLabel>
               <FormControl>
                 <div className='relative'>
-                  <Input placeholder='Enter username or mail' {...field} />
+                  <Input placeholder='Example@gmail.com' {...field} />
                   <div className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 '>
                     <CiMail />
                   </div>
@@ -119,7 +119,7 @@ export function LoginForm() {
               <FormControl>
                 <div className='relative'>
                   <Input
-                    placeholder='Enter password'
+                    placeholder='*********'
                     type={isPasswordVisible ? 'text' : 'password'}
                     {...field}
                   />
