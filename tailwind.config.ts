@@ -22,6 +22,7 @@ const config = {
         black: '#1C2434',
         body: '#64748B',
         gray: '#EFF4FB',
+        hightlightColor: '#7FF7AC',
         graydark: '#333A48',
         'gray-2': '#F7F9FC',
         'gray-3': '#FAFAFA',
