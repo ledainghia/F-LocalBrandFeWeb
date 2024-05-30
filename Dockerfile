@@ -8,8 +8,8 @@ FROM node:alpine AS deps
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile
 
 
 
@@ -25,7 +25,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
+RUN npm run build
 
 # If using npm comment out above and use below instead
 # RUN npm run build
@@ -58,4 +58,4 @@ USER nextjs
 EXPOSE 3000
 
 
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
