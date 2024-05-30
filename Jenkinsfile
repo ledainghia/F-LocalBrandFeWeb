@@ -42,7 +42,7 @@ pipeline {
                         docker container run -e GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
                                              -e GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
                                              -e NEXTAUTH_SECRET="${NEXTAUTH_SECRET}" \
-                                             -d --rm --name flocalbrandfeweb -p 3000:3000 chalsfptu/flocalbrandfeweb
+                                             -d --name flocalbrandfeweb -p 3000:3000 chalsfptu/flocalbrandfeweb
                     '''
                 }
             }
