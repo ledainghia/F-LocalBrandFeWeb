@@ -1,4 +1,4 @@
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { LuLayoutDashboard } from 'react-icons/lu';
 import SidebarLinkGroup from '../SidebarLinkGroup';
@@ -11,7 +11,7 @@ type SidebarItemProps = {
 export default function SidebarItem(sidebarData: SidebarItemProps) {
   const pathname = usePathname();
 
-  let storedSidebarExpanded = 'true';
+  let storedSidebarExpanded = 'false';
 
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
@@ -22,7 +22,7 @@ export default function SidebarItem(sidebarData: SidebarItemProps) {
     return (
       <>
         <h3 className='mb-4 ml-4 text-sm font-semibold text-bodydark2'>
-          {sidebarData.sidebarData.title}
+          {sidebarData.sidebarData.title.toUpperCase()}
         </h3>
       </>
     );
@@ -32,12 +32,8 @@ export default function SidebarItem(sidebarData: SidebarItemProps) {
   )
     return (
       <>
-        <ul className='mb-6 flex flex-col gap-1.5'>
-          <SidebarLinkGroup
-            activeCondition={
-              pathname === '/' || pathname?.includes('dashboard')
-            }
-          >
+        <ul className='mb-1 flex flex-col gap-1.5'>
+          <SidebarLinkGroup activeCondition={false}>
             {(handleClick, open) => {
               return (
                 <React.Fragment>
@@ -45,7 +41,7 @@ export default function SidebarItem(sidebarData: SidebarItemProps) {
                     href='#'
                     className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark hover:text-hightlightColor dark:hover:bg-meta-4 ${
                       pathname &&
-                      (pathname === '/' || pathname.includes('dashboard')) &&
+                      pathname.includes('dashboard') &&
                       'bg-graydark dark:bg-meta-4'
                     }`}
                     onClick={(e) => {
@@ -89,10 +85,11 @@ export default function SidebarItem(sidebarData: SidebarItemProps) {
                             <Link
                               href={subItem.path}
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === subItem.path && 'text-white'
+                                pathname === '/' ||
+                                (pathname === subItem.path &&
+                                  'text-white bg-graydark dark:bg-meta-4')
                               }`}
                             >
-                              {/* {subItem.icon} */}
                               {subItem.title}
                             </Link>
                           </li>
@@ -110,20 +107,20 @@ export default function SidebarItem(sidebarData: SidebarItemProps) {
     );
   else
     return (
-      <>
+      <ul className='mb-6 flex flex-col gap-1.5'>
         <li>
           <Link
-            href={sidebarData.sidebarData.path}
-            className={`w-full group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-              pathname &&
-              pathname.includes('calendar') &&
-              'bg-graydark dark:bg-meta-4'
+            href={`${sidebarData.sidebarData.path}`}
+            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark hover:text-hightlightColor dark:hover:bg-meta-4 ${
+              sidebarData.sidebarData.path === '' ||
+              (pathname?.includes(sidebarData.sidebarData.path!) &&
+                'bg-graydark dark:bg-meta-4')
             }`}
           >
             {sidebarData.sidebarData.icon}
             {sidebarData.sidebarData.title}
           </Link>
         </li>
-      </>
+      </ul>
     );
 }
