@@ -1,6 +1,6 @@
 import { userLogin } from '@/datatype/userType';
 import axios from 'axios';
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+const baseUrl = 'https://api.flocalbrand.site';
 
 export const authAPI = {
     login: async (user: userLogin) => {
