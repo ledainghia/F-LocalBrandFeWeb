@@ -7,7 +7,8 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
                     string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
-                    string(credentialsId: 'NEXTAUTH_SECRET', variable: 'NEXTAUTH_SECRET')
+                    string(credentialsId: 'NEXTAUTH_SECRET', variable: 'NEXTAUTH_SECRET'),
+                    string(credentialsId: 'NEXT_PUBLIC_BASE_URL', variable: 'NEXT_PUBLIC_BASE_URL')
                 ]) {
                     sh '''
                         docker build --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
