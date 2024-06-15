@@ -35,6 +35,10 @@ import { redirect, usePathname, useRouter } from 'next/navigation';
 import { getTranslation } from '@/i18n';
 import { getUser } from '@/helper/checkuser';
 import { Button } from '../ui/button';
+import { userAPI } from '@/config/axios/axios';
+import { UserInformation } from '@/datatype/userType';
+import { set } from 'lodash';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const Header = () => {
     if (!getUser()) redirect('/auth/login');
@@ -43,6 +47,22 @@ const Header = () => {
     const router = useRouter();
     const { t, i18n } = getTranslation();
     const isDarkMode = useSelector((state: IRootState) => state.themeConfig.isDarkMode);
+    const [updateUserInformation, setUpdateUserInformation] = useState(true);
+    const [userInformation, setUserInformation] = useState<UserInformation>();
+    const getUserInformation = async () => {
+        const response = await userAPI.getUser();
+        if (response.data.success) {
+            const userInfo: UserInformation = response.data.result.user;
+            console.log('userInfo1', response);
+            setUserInformation(userInfo);
+            console.log('userInfo', userInfo);
+            setUpdateUserInformation(false);
+        }
+    };
+
+    useEffect(() => {
+        if (updateUserInformation) getUserInformation();
+    }, [updateUserInformation]);
 
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -416,19 +436,27 @@ const Header = () => {
                                 offset={[0, 8]}
                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                 btnClassName="relative group block"
-                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src="/assets/images/user-profile.jpeg" alt="userProfile" />}
+                                button={
+                                    <Avatar>
+                                        <AvatarImage src={userInformation?.image} alt={userInformation?.userName} />
+                                        <AvatarFallback>{userInformation?.userName}</AvatarFallback>
+                                    </Avatar>
+                                }
                             >
                                 <ul className="w-[230px] !py-0 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                                     <li>
                                         <div className="flex items-center px-4 py-4">
-                                            <img className="h-10 w-10 rounded-md object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
+                                            <Avatar className="h-10 w-10 rounded-md object-cover">
+                                                <AvatarImage src={userInformation?.image} alt={userInformation?.userName} />
+                                                <AvatarFallback>{userInformation?.userName}</AvatarFallback>
+                                            </Avatar>
                                             <div className="truncate ltr:pl-4 rtl:pr-4">
                                                 <h4 className="text-base">
-                                                    John Doe
-                                                    <span className="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
+                                                    {userInformation?.userName}
+                                                    <span className="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">ADMIN</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    johndoe@gmail.com
+                                                    {userInformation?.email}
                                                 </button>
                                             </div>
                                         </div>

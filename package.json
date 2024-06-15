@@ -66,6 +66,7 @@
     "highlight.js": "^11.7.0",
     "i18next": "^22.4.10",
     "input-otp": "^1.2.4",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.394.0",
     "mantine-datatable": "^1.7.35",
     "next": "14.0.3",
