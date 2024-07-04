@@ -7,7 +7,6 @@ import ScrollToTop from '@/components/layouts/scroll-to-top';
 import Setting from '@/components/layouts/setting';
 import Sidebar from '@/components/layouts/sidebar';
 import Portals from '@/components/portals';
-import useFirebaseMessaging from '@/config/firebase/useFirebaseMessaging';
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
     // useFirebaseMessaging();
