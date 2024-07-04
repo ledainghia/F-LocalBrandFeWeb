@@ -5,7 +5,9 @@ import { IRootState } from '@/store';
 import { toggleRTL, toggleTheme, toggleMenu, toggleLayout, toggleAnimation, toggleNavbar, toggleSemidark } from '@/store/themeConfigSlice';
 import Loading from '@/components/layouts/loading';
 import { getTranslation } from '@/i18n';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+const queryClient = new QueryClient();
 function App({ children }: PropsWithChildren) {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const dispatch = useDispatch();
@@ -27,13 +29,16 @@ function App({ children }: PropsWithChildren) {
     }, [dispatch, initLocale, themeConfig.theme, themeConfig.menu, themeConfig.layout, themeConfig.rtlClass, themeConfig.animation, themeConfig.navbar, themeConfig.locale, themeConfig.semidark]);
 
     return (
-        <div
-            className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
-                themeConfig.rtlClass
-            } main-section relative font-nunito text-sm font-normal antialiased`}
-        >
-            {isLoading ? <Loading /> : children}
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <div
+                className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
+                    themeConfig.rtlClass
+                } main-section relative font-nunito text-sm font-normal antialiased`}
+            >
+                {isLoading ? <Loading /> : children}
+            </div>
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
     );
 }
 

@@ -12,6 +12,6 @@ export const authAPI = {
 
 export const userAPI = {
     getUser: async () => {
-        return await axiosInstance.get(`/api/auth/getuserinformation`);
+        return await axiosInstance.get(`/api/auth/user-info`);
     },
 };

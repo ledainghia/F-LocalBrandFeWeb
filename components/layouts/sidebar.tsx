@@ -31,8 +31,14 @@ import IconMenuUsers from '@/components/icon/menu/icon-menu-users';
 import IconMenuPages from '@/components/icon/menu/icon-menu-pages';
 import IconMenuAuthentication from '@/components/icon/menu/icon-menu-authentication';
 import IconMenuDocumentation from '@/components/icon/menu/icon-menu-documentation';
+import { AiFillProduct } from 'react-icons/ai';
+import { BiSolidCategory } from 'react-icons/bi';
+import { MdBorderBottom, MdCampaign, MdOutlineDeliveryDining } from 'react-icons/md';
 import { usePathname } from 'next/navigation';
 import { getTranslation } from '@/i18n';
+import IconUser from '../icon/icon-user';
+import { FaUsersGear } from 'react-icons/fa6';
+import { sidebarItemData } from './sidebarItemData';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -139,6 +145,32 @@ const Sidebar = () => {
                                     </ul>
                                 </AnimateHeight>
                             </li>
+                            {sidebarItemData &&
+                                sidebarItemData.map((item) =>
+                                    item.isHeader ? (
+                                        <>
+                                            <h2 className="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                                                <IconMinus className="hidden h-5 w-4 flex-none" />
+                                                <span>{t(item.title)}</span>
+                                            </h2>
+                                            <li className="nav-item">
+                                                <ul>
+                                                    {item.subMenu &&
+                                                        item.subMenu.map((subItem) => (
+                                                            <li className="nav-item">
+                                                                <Link href={subItem.path} className="group">
+                                                                    <div className="flex items-center">
+                                                                        {subItem.icon}
+                                                                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">{t(subItem.title)}</span>
+                                                                    </div>
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                </ul>
+                                            </li>
+                                        </>
+                                    ) : null
+                                )}
 
                             <h2 className="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
                                 <IconMinus className="hidden h-5 w-4 flex-none" />

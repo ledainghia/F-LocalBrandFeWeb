@@ -27,7 +27,7 @@ axiosInstance.interceptors.request.use(
                 }
                 return config;
             } else {
-                const response = await axios.post(`${BASE_URL}/api/auth/refreshtoken`, {
+                const response = await axios.post(`${BASE_URL}/api/auth/access-token`, {
                     refreshToken: token.refreshToken,
                 });
                 if (response.data.status !== 200) {
