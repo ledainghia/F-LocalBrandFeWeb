@@ -1,5 +1,4 @@
 import { token } from '@/datatype/userType';
-import { access } from 'fs';
 
 export const getUser = () => {
     // Check if user is logged in
