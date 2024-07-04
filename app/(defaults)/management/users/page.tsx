@@ -1,7 +1,7 @@
 'use client';
 import DataTableCustom from '@/components/datatables/data-table';
 import IconBell from '@/components/icon/icon-bell';
-import { FaUserCheck, FaUserEdit } from 'react-icons/fa';
+import { FaUserCheck, FaUserEdit, FaUserTimes } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { managementAPI } from '@/config/axios/axios';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +11,8 @@ import { DataTableColumn } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Loading from '@/components/layouts/loading';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 // const formatDate = (date: any) => {
 //     if (date) {
@@ -24,10 +26,12 @@ import Loading from '@/components/layouts/loading';
 
 const Users = () => {
     const [columns, setColumns] = useState<DataTableColumn<any>[]>([]);
-    const { data, error, isLoading } = useQuery({
+
+    const { data, error, isLoading, dataUpdatedAt } = useQuery({
         queryKey: ['users'],
         queryFn: managementAPI.getUsers,
     });
+    console.log('dataUpdatedAt', dataUpdatedAt);
 
     useEffect(() => {
         if (error || data?.data.success === false) {
@@ -41,18 +45,37 @@ const Users = () => {
                 { accessor: 'address', title: 'Address', sortable: true },
                 { accessor: 'roleName', title: 'Role Name', sortable: true },
                 {
+                    accessor: 'status',
+                    title: 'Status',
+                    sortable: true,
+                    render: (value) => {
+                        return (
+                            <Badge variant={'outline'} className={cn('rounded', { 'bg-red-400 text-white': value.status !== 'Active' })}>
+                                {value.status}
+                            </Badge>
+                        );
+                    },
+                },
+                {
                     accessor: 'action',
                     title: '',
                     sortable: false,
-                    render: () => {
+                    render: (value) => {
                         return (
                             <div className="space-x-2">
                                 <Button variant="outline" size="sm">
                                     <FaUserEdit className="h-4 w-4" />
                                 </Button>
-                                <Button variant="outline" size="sm">
-                                    <FaUserCheck className="h-4 w-4" />
-                                </Button>
+                                {value.status === 'Active' && (
+                                    <Button variant="outline" size="sm">
+                                        <FaUserCheck className="h-4 w-4" />
+                                    </Button>
+                                )}
+                                {value.status !== 'Active' && (
+                                    <Button variant="outline" size="sm">
+                                        <FaUserTimes className="h-4 w-4" />
+                                    </Button>
+                                )}
                             </div>
                         );
                     },

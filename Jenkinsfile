@@ -32,19 +32,25 @@ pipeline {
         stage('Deploy FE to DEV') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-                    string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
-                    string(credentialsId: 'NEXTAUTH_SECRET', variable: 'NEXTAUTH_SECRET'),
-                    string(credentialsId: 'NEXT_PUBLIC_BASE_URL', variable: 'NEXT_PUBLIC_BASE_URL')
+                    string(credentialsId: 'API_KEY', variable: 'API_KEY'),
+                    string(credentialsId: 'AUTH_DOMAIN', variable: 'AUTH_DOMAIN'),
+                    string(credentialsId: 'PROJECT_ID', variable: 'PROJECT_ID'),
+                    string(credentialsId: 'NEXT_PUBLIC_STORAGE_BUCKET', variable: 'NEXT_PUBLIC_STORAGE_BUCKET'),
+                    string(credentialsId: 'MESSAGING_SENDER_ID', variable: 'MESSAGING_SENDER_ID'),
+                    string(credentialsId: 'APP_ID', variable: 'APP_ID'),
+                    string(credentialsId: 'MEASUREMENT_ID', variable: 'MEASUREMENT_ID')
                 ]) {
                     echo 'Deploying and cleaning'
                     sh 'docker container stop flocalbrandfeweb || echo "this container does not exist"'
                     sh 'echo y | docker system prune'
                     sh '''
-                        docker container run -e GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
-                                             -e GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
-                                             -e NEXTAUTH_SECRET="${NEXTAUTH_SECRET}" \
-                                             -e NEXT_PUBLIC_BASE_URL="${NEXT_PUBLIC_BASE_URL}" \
+                        docker container run -e API_KEY="${API_KEY}" \
+                                             -e AUTH_DOMAIN="${AUTH_DOMAIN}" \
+                                             -e PROJECT_ID="${PROJECT_ID}" \
+                                             -e NEXT_PUBLIC_STORAGE_BUCKET="${NEXT_PUBLIC_STORAGE_BUCKET}" \
+                                             -e MESSAGING_SENDER_ID="${MESSAGING_SENDER_ID}" \
+                                             -e APP_ID="${APP_ID}" \
+                                             -e MEASUREMENT_ID="${MEASUREMENT_ID}" \
                                              -d --name flocalbrandfeweb -p 3000:3000 chalsfptu/flocalbrandfeweb
                     '''
                 }
