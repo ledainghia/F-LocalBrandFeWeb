@@ -25,12 +25,13 @@ axiosInstance.interceptors.request.use(
                 } else {
                     sessionStorage.removeItem('user');
                 }
+                window.location.href = '/auth/login';
                 return config;
             } else {
                 const response = await axios.post(`${BASE_URL}/api/auth/access-token`, {
                     refreshToken: token.refreshToken,
                 });
-                if (response.data.status !== 200) {
+                if (response.data.success !== true) {
                     if (token.location === 'local') {
                         localStorage.removeItem('user');
                     } else {

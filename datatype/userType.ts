@@ -23,3 +23,12 @@ export type UserInformation = {
     image: string;
     roleId: number;
 };
+
+export type UserAccount = {
+    id: number;
+    userName: string;
+    email: string;
+    phone: string;
+    address: string;
+    roleName: string;
+};

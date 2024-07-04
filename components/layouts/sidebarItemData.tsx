@@ -1,9 +1,11 @@
 import IconMenuUsers from '@/components/icon/menu/icon-menu-users';
 import { AiFillProduct } from 'react-icons/ai';
 import { BiSolidCategory } from 'react-icons/bi';
-import { FaUsersGear } from 'react-icons/fa6';
+import { FaUserGear, FaUsersGear } from 'react-icons/fa6';
 import { MdBorderBottom, MdCampaign, MdOutlineDeliveryDining } from 'react-icons/md';
+import { RiLockPasswordFill } from 'react-icons/ri';
 import { BsCollectionFill } from 'react-icons/bs';
+import { ImProfile } from 'react-icons/im';
 // Define the type for a sidebar item
 export type sidebarItem = {
     title: string;
@@ -15,8 +17,9 @@ export type sidebarItem = {
 // Define the type for a sub-menu item
 export type SubMenuItem = {
     title: string;
-    icon: JSX.Element;
-    path: string;
+    icon?: JSX.Element;
+    path?: string;
+    subMenu?: SubMenuItem[];
 };
 
 // Define class names for the icon in the sidebar
@@ -71,18 +74,49 @@ export const sidebarItemData: sidebarItem[] = [
             {
                 title: 'Orders',
                 icon: <MdBorderBottom className={classNamesForIconSidebar} />,
-                path: '/management/orders',
+                subMenu: [
+                    {
+                        title: 'Payment',
+                        path: '/management/orders/payment',
+                    },
+                    {
+                        title: 'History',
+                        path: '/management/orders/history',
+                    },
+                    {
+                        title: 'Order Detail',
+                        path: '/management/orders/order-detail/:id',
+                    },
+                    {
+                        title: 'Order Tracking',
+                        path: '/management/orders/order-tracking',
+                    },
+                    {
+                        title: 'Boos mayf ddepj trai',
+                        path: '/management/orders/boos-mayf-ddepj-trai',
+                    },
+                ],
             },
         ],
     },
     {
-        title: 'Settings',
+        title: 'Profile',
         isHeader: true,
         subMenu: [
             {
-                title: 'General',
-                icon: <MdBorderBottom className={classNamesForIconSidebar} />,
-                path: '/settings/general',
+                title: 'Change Password',
+                icon: <RiLockPasswordFill className={classNamesForIconSidebar} />,
+                path: '/profile/change-password',
+            },
+            {
+                title: 'Profile Detail',
+                icon: <ImProfile className={classNamesForIconSidebar} />,
+                path: '/profile/profile-detail',
+            },
+            {
+                title: 'Profile Setting',
+                icon: <FaUserGear className={classNamesForIconSidebar} />,
+                path: '/profile/profile-setting',
             },
         ],
     },
