@@ -79,8 +79,12 @@ export const managementAPI = {
     getCategories: async (filter: string) => {
         return await axiosInstance.get(`/api/categories/filter?${filter}`);
     },
-    postCategory: async (data: Category) => {
-        return await axiosInstance.post(`/api/category`, data);
+    postCategory: async (data: FormData) => {
+        return await axiosInstance.post(`/api/category`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
     },
     putCategory: async (data: Category) => {
         return await axiosInstance.put(`/api/categorie`, data);

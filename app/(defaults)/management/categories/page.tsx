@@ -34,7 +34,7 @@ const Categories = () => {
     const [categoryNameAdd, setCategoryNameAdd] = useState('' as string);
     const [descriptionAdd, setDescriptionAdd] = useState('' as string);
     const [statusAdd, setStatusAdd] = useState('Active' as string);
-    const [image, setImage] = useState<any>();
+    const [image, setImage] = useState<File | null>(null);
 
     const [isAsc, setIsAsc] = useState('TRUE' as string);
     const [filter, setFilter] = useState('' as string);
@@ -168,14 +168,13 @@ const Categories = () => {
     };
 
     const handleAddCategory = () => {
-        const data = {
-            categoryName: categoryNameAdd,
-            description: descriptionAdd,
-            status: statusAdd,
-            ImageUrl: image,
-        };
+        const formData = new FormData();
+        formData.append('CategoryName', categoryNameAdd);
+        formData.append('Description', descriptionAdd);
+        formData.append('Status', statusAdd);
+        formData.append('ImageUrl', image as Blob);
         managementAPI
-            .postCategory(data)
+            .postCategory(formData)
             .then((data) => {
                 if (data?.data.success === true) {
                     queryClient.invalidateQueries({ queryKey: ['categories'] });
