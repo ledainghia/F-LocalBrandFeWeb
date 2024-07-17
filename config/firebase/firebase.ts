@@ -1,19 +1,32 @@
-import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: 'f-localbrand.appspot.com',
-    messagingSenderId: process.env.MESSAGING_SENDER_ID,
-    appId: process.env.APP_ID,
-    measurementId: process.env.MEASUREMENT_ID,
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import { getMessaging, getToken, isSupported } from 'firebase/messaging';
+import { firebaseConfig } from './fnContants';
+
+// Replace the following with your app's Firebase project configuration
+
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+const messaging = async () => {
+    const supported = await isSupported();
+    return supported ? getMessaging(app) : null;
 };
 
-console.log(firebaseConfig);
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app);
+export const fetchToken = async () => {
+    const fbConfig = firebaseConfig;
+    try {
+        const fcmMessaging = await messaging();
+        if (fcmMessaging) {
+            const token = await getToken(fcmMessaging, {
+                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
+                serviceWorkerRegistration: await navigator.serviceWorker.register('/firebase-messaging-sw.js' + '?cf=' + JSON.stringify(fbConfig), { scope: '/' }),
+            });
+            return token;
+        }
+        return null;
+    } catch (err) {
+        console.error('An error occurred while fetching the token:', err);
+        return null;
+    }
+};
+
+export { app, messaging };

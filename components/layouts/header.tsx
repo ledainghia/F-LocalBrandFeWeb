@@ -39,9 +39,12 @@ import { userAPI } from '@/config/axios/axios';
 import { UserInformation } from '@/datatype/userType';
 import { set } from 'lodash';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { FaCalendarWeek } from 'react-icons/fa6';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const Header = () => {
     if (!getUser()) redirect('/auth/login');
+
     const pathname = usePathname();
     const dispatch = useDispatch();
     const router = useRouter();
@@ -53,12 +56,20 @@ const Header = () => {
         const response = await userAPI.getUser();
         if (response.data.success) {
             const userInfo: UserInformation = response.data.result.user;
-            console.log('userInfo1', response);
             setUserInformation(userInfo);
-            console.log('userInfo', userInfo);
             setUpdateUserInformation(false);
         }
     };
+
+    const { data, error } = useQuery({
+        queryKey: ['notifications'],
+        queryFn: () => userAPI.getNotifications(),
+        enabled: !!userInformation,
+    });
+
+    if (data && !error) {
+        console.log(data);
+    }
 
     useEffect(() => {
         if (updateUserInformation) getUserInformation();
@@ -200,6 +211,21 @@ const Header = () => {
                             <li>
                                 <Link href="/apps/todolist" className="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60">
                                     <IconEdit />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#"
+                                    onClick={() => {
+                                        const width = 800;
+                                        const height = 600;
+                                        const left = window.innerWidth / 2 - width / 2;
+                                        const top = window.innerHeight / 2 - height / 2;
+                                        window.open('https://api.flocalbrand.site/jobs', 'HangfireDashboard', `width=${width},height=${height},top=${top},left=${left},noopener,noreferrer`);
+                                    }}
+                                    className="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                                >
+                                    <FaCalendarWeek />
                                 </Link>
                             </li>
                             <li>

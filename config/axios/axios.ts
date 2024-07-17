@@ -2,6 +2,7 @@ import { Category } from '@/datatype/manageType';
 import { userLogin } from '@/datatype/userType';
 import axios from 'axios';
 import axiosInstance from './interceptorAxios';
+import { Product } from '@/datatype/productType';
 
 const baseUrl = 'https://api.flocalbrand.site';
 
@@ -14,6 +15,12 @@ export const authAPI = {
 export const userAPI = {
     getUser: async () => {
         return await axiosInstance.get(`/api/auth/user-info`);
+    },
+    updateDeviceToken: async (token: string) => {
+        return await axiosInstance.put(`/api/user/update/deviceid/${token}`);
+    },
+    getNotifications: async () => {
+        return await axiosInstance.get(`/api/notifications`);
     },
 };
 
@@ -73,6 +80,9 @@ export const managementAPI = {
     getProductById: async (id: string) => {
         return await axiosInstance.get(`/api/products/${id}`);
     },
+    postProduct: async (data: Product) => {
+        return await axiosInstance.post(`/api/product/create-multi-size-color`, data);
+    },
     // End of CRUD for Product
 
     // Start of CRUD for Category
@@ -94,6 +104,11 @@ export const managementAPI = {
     },
     putCategoryStatus: async (id: string, status: string) => {
         return await axiosInstance.put(`/api/categorie/${id}/status`, {
+            status: status,
+        });
+    },
+    changeStatusCategory: async (id: string, status: string) => {
+        return await axiosInstance.put(`/api/category/${id}/status`, {
             status: status,
         });
     },

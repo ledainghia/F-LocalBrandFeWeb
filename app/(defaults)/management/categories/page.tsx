@@ -5,7 +5,7 @@ import IconBell from '@/components/icon/icon-bell';
 import Loading from '@/components/layouts/loading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -34,6 +34,7 @@ const Categories = () => {
     const [categoryNameAdd, setCategoryNameAdd] = useState('' as string);
     const [descriptionAdd, setDescriptionAdd] = useState('' as string);
     const [statusAdd, setStatusAdd] = useState('Active' as string);
+    const [saveDone, setSaveDone] = useState(false);
     const [image, setImage] = useState<File | null>(null);
 
     const [isAsc, setIsAsc] = useState('TRUE' as string);
@@ -68,27 +69,27 @@ const Categories = () => {
             })
             .then((result) => {
                 if (result.value) {
-                    handleChangeStatus(id);
-                    swalWithBootstrapButtons.fire('Deleted!', 'Your file has been deleted.', 'success');
+                    handleChangeStatus(id, action);
+                    swalWithBootstrapButtons.fire(`${action.toLowerCase()}!`, `Your category has been ${action.toLowerCase()}.`, 'success');
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     swalWithBootstrapButtons.fire('Cancelled', 'No change', 'info');
                 }
             });
     };
 
-    const handleChangeStatus = (id: string) => {
+    const handleChangeStatus = (id: string, action: string) => {
         managementAPI
-            .deleteCategory(id)
-            .then(() => {
+            .changeStatusCategory(id, action)
+            .then((data) => {
                 if (data?.data.success === true) {
                     queryClient.invalidateQueries({ queryKey: ['categories'] });
-                    toast.success('Category change status successfully');
+                    toast.success('Category status changed successfully');
                 } else {
-                    toast.error('Error change status');
+                    toast.error('Error changing category status');
                 }
             })
             .catch(() => {
-                toast.error('Error change status');
+                toast.error('Error changing category status');
             });
     };
 
@@ -136,7 +137,7 @@ const Categories = () => {
                                     <FaEdit className="h-4 w-4" />
                                 </Button>
                                 {value.status === 'Active' && (
-                                    <Button variant="outline" className="bg-red-500 text-white" size="sm" onClick={() => showAlert(value.id, 'Deleted', value.categoryName)}>
+                                    <Button variant="outline" className="bg-red-500 text-white" size="sm" onClick={() => showAlert(value.id, 'Inactive', value.categoryName)}>
                                         <RiDeleteBin5Fill className="h-4 w-4" />
                                     </Button>
                                 )}
@@ -168,6 +169,10 @@ const Categories = () => {
     };
 
     const handleAddCategory = () => {
+        if (!categoryNameAdd || !descriptionAdd || !image) {
+            toast.error('Please fill all fields');
+            return;
+        }
         const formData = new FormData();
         formData.append('CategoryName', categoryNameAdd);
         formData.append('Description', descriptionAdd);
@@ -178,6 +183,10 @@ const Categories = () => {
             .then((data) => {
                 if (data?.data.success === true) {
                     queryClient.invalidateQueries({ queryKey: ['categories'] });
+                    setCategoryNameAdd('');
+                    setDescriptionAdd('');
+                    setImage(null);
+
                     toast.success('Category added successfully');
                 } else {
                     toast.error('Error adding category');
@@ -202,16 +211,7 @@ const Categories = () => {
 
     return (
         <div>
-            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
-                    <IconBell />
-                </div>
-                <span className="ltr:mr-3 rtl:ml-3">a</span>
-                <a href="https://www.npmjs.com/package/mantine-datatable" target="_blank" className="block hover:underline" rel="noreferrer">
-                    https://www.npmjs.com/package/mantine-datatable
-                </a>
-            </div>
-            <div className="panel mt-6">
+            <div className="panel ">
                 <div className="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
                     <div className="flex items-center gap-5 ltr:mr-auto rtl:ml-auto">
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -257,9 +257,9 @@ const Categories = () => {
                                                 </SelectTrigger>
                                                 <SelectContent id="status" className="bg-white">
                                                     <SelectGroup>
-                                                        <SelectLabel>Active / Deleted</SelectLabel>
-                                                        <SelectItem value="Active">ACTIVE</SelectItem>
-                                                        <SelectItem value="Deleted">Deleted</SelectItem>
+                                                        <SelectLabel>Active / Inactive</SelectLabel>
+                                                        <SelectItem value="Active">Active</SelectItem>
+                                                        <SelectItem value="Inactive">Inactive</SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
@@ -314,36 +314,57 @@ const Categories = () => {
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="bg-white sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Add new category</DialogTitle>
-                                        <DialogDescription>Click save when you're done.</DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid gap-4 py-4">
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label htmlFor="name" className="text-right">
-                                                Category Name
-                                            </Label>
-                                            <Input id="name" onChange={(e) => setCategoryNameAdd(e.target.value)} placeholder="Type category name here ..." className="col-span-3" />
+                                    <form>
+                                        {' '}
+                                        <DialogHeader>
+                                            <DialogTitle>Add new category</DialogTitle>
+                                            <DialogDescription>Click save when you're done.</DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid gap-4 py-4">
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="name" className="text-right">
+                                                    Category Name
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    required
+                                                    onChange={(e) => {
+                                                        setCategoryNameAdd(e.target.value);
+                                                    }}
+                                                    placeholder="Type category name here ..."
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="username" className="text-right">
+                                                    Description
+                                                </Label>
+                                                <Textarea
+                                                    required
+                                                    onChange={(e) => setDescriptionAdd(e.target.value)}
+                                                    id="username"
+                                                    placeholder="Type description name here ..."
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="image" className="text-right">
+                                                    Image upload
+                                                </Label>
+                                                <input required type="file" id="image" onChange={handleUploadImage} className="col-span-3" />
+                                            </div>
                                         </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label htmlFor="username" className="text-right">
-                                                Description
-                                            </Label>
-                                            <Textarea onChange={(e) => setDescriptionAdd(e.target.value)} id="username" placeholder="Type description name here ..." className="col-span-3" />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label htmlFor="image" className="text-right">
-                                                Image upload
-                                            </Label>
-                                            <input type="file" id="image" onChange={handleUploadImage} className="col-span-3" />
-                                        </div>
-                                    </div>
-                                    <DialogFooter>
-                                        <Button variant={'outline'}>Cancel</Button>
-                                        <Button type="submit" onClick={handleAddCategory} className="text-white">
-                                            Save changes
-                                        </Button>
-                                    </DialogFooter>
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant={'outline'}>Cancel</Button>
+                                            </DialogClose>
+                                            <DialogClose asChild>
+                                                <Button onClick={handleAddCategory} className="text-white">
+                                                    Save changes
+                                                </Button>
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </form>
                                 </DialogContent>
                             </Dialog>
                         </div>

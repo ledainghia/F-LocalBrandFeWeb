@@ -1,3 +1,4 @@
+'use client';
 import ContentAnimation from '@/components/layouts/content-animation';
 import Footer from '@/components/layouts/footer';
 import Header from '@/components/layouts/header';
@@ -7,8 +8,12 @@ import ScrollToTop from '@/components/layouts/scroll-to-top';
 import Setting from '@/components/layouts/setting';
 import Sidebar from '@/components/layouts/sidebar';
 import Portals from '@/components/portals';
+import useFcmToken from '@/hooks/useFcmToken';
+
+import { useEffect } from 'react';
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
+    const { token, notificationPermissionStatus } = useFcmToken();
     // useFirebaseMessaging();
     return (
         <>
