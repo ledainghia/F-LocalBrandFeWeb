@@ -3,6 +3,7 @@ import { userLogin } from '@/datatype/userType';
 import axios from 'axios';
 import axiosInstance from './interceptorAxios';
 import { Product } from '@/datatype/productType';
+import { add } from 'lodash';
 
 const baseUrl = 'https://api.flocalbrand.site';
 
@@ -82,6 +83,9 @@ export const managementAPI = {
     },
     postProduct: async (data: Product) => {
         return await axiosInstance.post(`/api/product/create-multi-size-color`, data);
+    },
+    addRecommentProduct: async (data: any) => {
+        return await axiosInstance.post(`/api/product/recommended-products`, data);
     },
     // End of CRUD for Product
 

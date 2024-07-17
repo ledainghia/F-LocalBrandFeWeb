@@ -58,14 +58,18 @@ const AddNewProductPage = () => {
     useEffect(() => {
         if (categories) {
             console.log('categories', categories.data.result?.categories);
-            setCategoriesList(categories.data.result?.categories);
+            const ct = categories.data.result?.categories;
+            const ctFilter = ct.filter((c: any) => c.status === 'Active');
+            setCategoriesList(ctFilter);
         }
     }, [categories]);
 
     useEffect(() => {
         if (campaigns) {
             console.log('campaigns', campaigns.data.result?.campaigns);
-            setCampaignsList(campaigns.data.result?.campaigns);
+            const cmp = campaigns.data.result?.campaigns;
+            const cmpFilter = cmp.filter((c: any) => c.status === 'Active');
+            setCampaignsList(cmpFilter);
         }
     }, [campaigns]);
 
@@ -135,11 +139,11 @@ const AddNewProductPage = () => {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="#">Management</BreadcrumbLink>
+                            <BreadcrumbPage>Management</BreadcrumbPage>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/products">Products</BreadcrumbLink>
+                            <BreadcrumbLink href="/management/products">Products</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>

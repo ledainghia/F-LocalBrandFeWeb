@@ -37,6 +37,7 @@ import { IoColorPaletteOutline, IoResizeSharp } from 'react-icons/io5';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import SizeColorComponent from './SizeColorComponent';
 import Link from 'next/link';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 type Product = {
     id: string;
     size: number;
@@ -105,8 +106,21 @@ const Categories = () => {
     }
 
     return (
-        <div>
-            <div className="panel ">
+        <>
+            <div className="panel">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Management</BreadcrumbPage>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Products list</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+            <div className="panel mt-6 ">
                 <div className="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
                     <div className="flex items-center gap-5 ltr:mr-auto rtl:ml-auto">
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -268,7 +282,7 @@ const Categories = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

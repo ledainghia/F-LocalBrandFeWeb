@@ -63,6 +63,10 @@ export const sidebarItemData: sidebarItem[] = [
                         title: 'Add Product',
                         path: '/management/products/addNewProduct',
                     },
+                    {
+                        title: 'Add Recomment Product',
+                        path: '/management/products/addRecomentProduct',
+                    },
                 ],
             },
             {

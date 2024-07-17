@@ -9,6 +9,7 @@ export type Product = {
     imageBase64: string;
     status: string;
     productSizes?: ProductSize[];
+    id?: number;
 };
 
 export type ProductSize = {
