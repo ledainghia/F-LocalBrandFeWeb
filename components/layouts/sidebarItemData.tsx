@@ -54,7 +54,16 @@ export const sidebarItemData: sidebarItem[] = [
             {
                 title: 'Products',
                 icon: <AiFillProduct className={classNamesForIconSidebar} />,
-                path: '/management/products',
+                subMenu: [
+                    {
+                        title: 'Product List',
+                        path: '/management/products',
+                    },
+                    {
+                        title: 'Add Product',
+                        path: '/management/products/addNewProduct',
+                    },
+                ],
             },
             {
                 title: 'Collections',

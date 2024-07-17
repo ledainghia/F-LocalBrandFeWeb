@@ -210,7 +210,7 @@ const Categories = () => {
                 <div className="grid grid-cols-12 gap-4">
                     {products && products.length > 0 ? (
                         products.map((product) => (
-                            <Card className="col-span-3 rounded-t-lg" key={product.id}>
+                            <Card className="col-span-12 rounded-t-lg lg:col-span-6 xl:col-span-4 2xl:col-span-3" key={product.id}>
                                 <CardHeader className="rounded-t-lg p-0 pb-5">
                                     <div className="relative w-full">
                                         <DropdownMenu>
@@ -226,7 +226,9 @@ const Categories = () => {
                                                 <DropdownMenuItem>Subscription</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-
+                                        <Badge variant={product.status === 'Active' ? 'default' : 'destructive'} className={`absolute left-2 top-2 rounded-md`}>
+                                            {product.status}
+                                        </Badge>
                                         <img alt={product.productName} className="h-[180px] w-full rounded-t-lg object-cover " src={product.imageUrl} />
                                     </div>
                                 </CardHeader>
@@ -234,9 +236,6 @@ const Categories = () => {
                                     <div className="flex flex-col">
                                         <div className="flex gap-2">
                                             <CardTitle>{product.productName}</CardTitle>
-                                            <Badge variant={product.status === 'Active' ? 'default' : 'destructive'} className={`rounded-md`}>
-                                                {product.status}
-                                            </Badge>
                                         </div>
                                         <CardDescription className="mt-2">{product.description}</CardDescription>
                                         <Separator className="mt-2" />
