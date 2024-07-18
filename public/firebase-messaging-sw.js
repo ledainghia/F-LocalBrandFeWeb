@@ -6,6 +6,7 @@ const cf = urlParams;
 
 const firebaseConfig = JSON.parse(cf.get('cf'));
 
+console.info('%cPush Notifications issue' + firebaseConfig, 'color: green; background: #c7c7c7; padding: 8px; font-size: 20px');
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
