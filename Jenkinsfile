@@ -29,7 +29,7 @@ pipeline {
                     string(credentialsId: 'NEXT_PUBLIC_API_KEY', variable: 'NEXT_PUBLIC_API_KEY'),
                     string(credentialsId: 'NEXT_PUBLIC_MEASUREMENT_ID', variable: 'NEXT_PUBLIC_MEASUREMENT_ID'),
                     string(credentialsId: 'NEXT_PUBLIC_APP_ID', variable: 'NEXT_PUBLIC_APP_ID'),
-                    string(credentialsId: 'NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY', variable: 'NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY')
+                    string(credentialsId: 'NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY', variable: 'NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY'),
                     string(credentialsId: 'NEXT_PUBLIC_MESSAGING_SENDER_ID', variable: 'NEXT_PUBLIC_MESSAGING_SENDER_ID')
                 ]) {
                     echo 'Deploying and cleaning'
