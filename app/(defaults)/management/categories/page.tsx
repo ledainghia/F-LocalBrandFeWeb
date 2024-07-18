@@ -1,8 +1,5 @@
 'use client';
 import DataTableCustom from '@/components/datatables/data-table';
-import HeaderOfTable from '@/components/datatables/headerOfTable';
-import IconBell from '@/components/icon/icon-bell';
-import Loading from '@/components/layouts/loading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -13,14 +10,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Textarea } from '@/components/ui/textarea';
 import { managementAPI } from '@/config/axios/axios';
 import { cn } from '@/lib/utils';
-import { s } from '@fullcalendar/core/internal-common';
 import { PopoverClose } from '@radix-ui/react-popover';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { set } from 'lodash';
 import { DataTableColumn } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
-import { FaEdit, FaUserCheck, FaUserEdit, FaUserTimes } from 'react-icons/fa';
-import { MdLibraryAdd } from 'react-icons/md';
+import { FaEdit } from 'react-icons/fa';
 import { RiDeleteBin5Fill, RiDeviceRecoverFill, RiUserAddLine } from 'react-icons/ri';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -34,7 +28,7 @@ const Categories = () => {
     const [categoryNameAdd, setCategoryNameAdd] = useState('' as string);
     const [descriptionAdd, setDescriptionAdd] = useState('' as string);
     const [statusAdd, setStatusAdd] = useState('Active' as string);
-    const [saveDone, setSaveDone] = useState(false);
+
     const [image, setImage] = useState<File | null>(null);
 
     const [isAsc, setIsAsc] = useState('TRUE' as string);
@@ -50,7 +44,7 @@ const Categories = () => {
     const showAlert = async (id: string, action: string, name: string) => {
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
-                confirmButton: 'btn btn-secondary',
+                confirmButton: 'btn btn bg-red-500 text-white ltr:ml-3 rtl:mr-3',
                 cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3',
                 popup: 'sweet-alerts',
             },
@@ -162,7 +156,6 @@ const Categories = () => {
     };
 
     const handleUploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('event', event.target.files);
         if (event?.target.files === null) return;
         const fileUpload = event?.target.files[0];
         setImage(fileUpload);

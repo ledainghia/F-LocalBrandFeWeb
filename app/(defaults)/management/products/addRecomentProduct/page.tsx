@@ -56,30 +56,25 @@ const AddRecommentProduct = () => {
         }
     };
 
-    const handleAddRecommentProduct = () => {
-        console.log('productChoice', productChoice);
-        console.log('productRecomment', productRecomment);
-        const data = {
-            productId: productChoice,
-            productRecomment: productRecomment,
-        };
-        console.log('data', data);
-    };
-
     const mutation = useMutation({
-        mutationFn: () => {
+        mutationFn: async () => {
             const data = {
                 productId: productChoice,
                 recommendedProductIds: productRecomment,
             };
 
-            return managementAPI.addRecommentProduct(data);
-        },
-        onSuccess: () => {
-            toast.success('Add recomment product successfully');
-        },
-        onError: () => {
-            toast.error("Can't add recomment product");
+            try {
+                const re = await managementAPI.addRecommentProduct(data);
+                if (re.data.success) toast.success('Add recomment product success');
+                else {
+                    toast.error('Add recomment product failed');
+                }
+            } catch (error: any) {
+                console.log('error', error);
+                toast.error(error.response.data.result.message);
+            } finally {
+                return data;
+            }
         },
     });
 

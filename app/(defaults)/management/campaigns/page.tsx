@@ -1,10 +1,7 @@
 'use client';
 import DataTableCustom from '@/components/datatables/data-table';
-import HeaderOfTable from '@/components/datatables/headerOfTable';
-import IconBell from '@/components/icon/icon-bell';
-import Loading from '@/components/layouts/loading';
 import { Badge } from '@/components/ui/badge';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -16,18 +13,17 @@ import { managementAPI } from '@/config/axios/axios';
 import { cn } from '@/lib/utils';
 import { PopoverClose } from '@radix-ui/react-popover';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { set } from 'lodash';
 import { DataTableColumn } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
-import { FaEdit, FaUserCheck, FaUserEdit, FaUserTimes } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import { IoBanSharp } from 'react-icons/io5';
-import { MdLibraryAdd } from 'react-icons/md';
-import { RiDeleteBin5Fill, RiUserAddLine } from 'react-icons/ri';
+import { RiUserAddLine } from 'react-icons/ri';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
-const Collections = () => {
+const Campaigns = () => {
     const [columns, setColumns] = useState<DataTableColumn<any>[]>([]);
     const [search, setSearch] = useState('');
     const [collectionName, setCollectionName] = useState('' as string);
@@ -40,8 +36,8 @@ const Collections = () => {
     const queryClient = useQueryClient();
 
     const { data, error, isLoading } = useQuery({
-        queryKey: ['collections'],
-        queryFn: () => managementAPI.getCollections(filter),
+        queryKey: ['campaigns'],
+        queryFn: () => managementAPI.getCampaigns(filter),
     });
 
     const showAlert = async (userID: string, action: string, userName: string) => {
@@ -67,12 +63,12 @@ const Collections = () => {
             .then((result) => {
                 if (result.value) {
                     managementAPI
-                        .changeStatusCollection(userID, action)
+                        .changeStatusCampaign(userID, action)
                         .then((res) => {
                             if (res.data.success) {
-                                queryClient.invalidateQueries({ queryKey: ['collections'] });
+                                queryClient.invalidateQueries({ queryKey: ['campaigns'] });
                                 toast.success(`Collection ${action} successfully`);
-                                swalWithBootstrapButtons.fire(action + '!', `Your collection has been ${action}.`, 'success');
+                                swalWithBootstrapButtons.fire(action + '!', `Your campaign has been ${action}.`, 'success');
                             } else {
                                 toast.error(res.data.result.mesagge || 'Error changing status');
                             }
@@ -92,7 +88,52 @@ const Collections = () => {
         } else {
             const collumnsConfig: DataTableColumn<any>[] = [
                 { accessor: 'id', title: 'ID', sortable: true },
-                { accessor: 'collectionName', title: 'Collection Name', sortable: true },
+                { accessor: 'campaignName', title: 'Campaign Name', sortable: true },
+                {
+                    accessor: 'collections',
+                    title: 'Collections',
+                    sortable: true,
+                    render: (value) => {
+                        return (
+                            <div className="flex max-w-40 items-center gap-1">
+                                {value.collections && value.collections.length > 0 ? (
+                                    <>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger>
+                                                    <div className="space-x-1">
+                                                        {value.collections.slice(0, 1).map((collection: any) => (
+                                                            <Badge key={collection.id} variant={'outline'} className="rounded-sm bg-lime-100">
+                                                                {collection.collectionName}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <div className="space-x-1">
+                                                        {value.collections.map((collection: any) => (
+                                                            <Badge key={collection.id} variant={'outline'} className="rounded-sm">
+                                                                {collection.collectionName}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+
+                                        {value.collections.length > 1 && (
+                                            <Badge variant={'outline'} className="rounded-sm bg-lime-100">
+                                                +{value.collections.length - 1} more
+                                            </Badge>
+                                        )}
+                                    </>
+                                ) : (
+                                    'No collection in this campaign'
+                                )}
+                            </div>
+                        );
+                    },
+                },
                 {
                     accessor: 'products',
                     title: 'Products',
@@ -106,7 +147,7 @@ const Collections = () => {
                                             <Tooltip>
                                                 <TooltipTrigger>
                                                     <div className="space-x-1">
-                                                        {value.products.slice(0, 2).map((product: any) => (
+                                                        {value.products.slice(0, 1).map((product: any) => (
                                                             <Badge key={product.id} variant={'outline'} className="rounded-sm bg-lime-100">
                                                                 {product.productName}
                                                             </Badge>
@@ -114,7 +155,7 @@ const Collections = () => {
                                                     </div>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <div className="space-x-1">
+                                                    <div className=" space-x-1">
                                                         {value.products.map((product: any) => (
                                                             <Badge key={product.id} variant={'outline'} className="rounded-sm">
                                                                 {product.productName}
@@ -125,9 +166,9 @@ const Collections = () => {
                                             </Tooltip>
                                         </TooltipProvider>
 
-                                        {value.products.length > 2 && (
+                                        {value.products.length > 1 && (
                                             <Badge variant={'outline'} className="rounded-sm bg-lime-100">
-                                                +{value.products.length - 2} more
+                                                +{value.products.length - 1} more
                                             </Badge>
                                         )}
                                     </>
@@ -176,7 +217,7 @@ const Collections = () => {
                 },
             ];
             setColumns(collumnsConfig);
-            setRowData(data?.data.result.collections || []);
+            setRowData(data?.data.result.campaigns || []);
         }
     }, [data]);
 
@@ -185,28 +226,24 @@ const Collections = () => {
         setFilter(filter);
     };
 
-    useEffect(() => {
-        queryClient.invalidateQueries({ queryKey: ['collections'] });
-    }, [filter]);
-
     const addNewCollection = useMutation({
         mutationFn: () => {
             if (!collectionNameAdd) {
                 throw new Error('You need to provide a collection name');
             }
             const data = {
-                collectionName: collectionNameAdd,
+                CampaignName: collectionNameAdd,
                 status: 'Active',
             };
-            return managementAPI.postCollection(data);
+            return managementAPI.postCampaign(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['collections'] });
+            queryClient.invalidateQueries({ queryKey: ['campaigns'] });
             setCollectionNameAdd('');
-            toast.success('Collection added successfully');
+            toast.success('Campaign added successfully');
         },
         onError: (error) => {
-            toast.error(error.message || 'Error adding collection');
+            toast.error(error.message || 'Error adding campaign');
         },
     });
 
@@ -315,7 +352,7 @@ const Collections = () => {
                             <Dialog>
                                 <DialogTrigger asChild>
                                     <Button variant={'outline'}>
-                                        <RiUserAddLine className="mr-2 h-4 w-4" /> Add new collection
+                                        <IoMdAddCircleOutline className="mr-2 h-4 w-4" /> Add new campaign
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[425px]">
@@ -326,7 +363,7 @@ const Collections = () => {
                                     <div className="grid gap-4 py-4">
                                         <div className="grid grid-cols-4 items-center gap-4">
                                             <Label htmlFor="name" className="text-right">
-                                                Collection Name
+                                                Campaign Name
                                             </Label>
                                             <Input value={collectionNameAdd} onChange={(e) => setCollectionNameAdd(e.target.value)} className="col-span-3" />
                                         </div>
@@ -350,4 +387,4 @@ const Collections = () => {
     );
 };
 
-export default Collections;
+export default Campaigns;

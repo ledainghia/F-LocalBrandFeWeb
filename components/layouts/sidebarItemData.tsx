@@ -46,11 +46,7 @@ export const sidebarItemData: sidebarItem[] = [
                 icon: <FaUsersGear className={classNamesForIconSidebar} />,
                 path: '/management/customers',
             },
-            {
-                title: 'Delivers',
-                icon: <MdOutlineDeliveryDining className={classNamesForIconSidebar} />,
-                path: '/management/delivers',
-            },
+
             {
                 title: 'Products',
                 icon: <AiFillProduct className={classNamesForIconSidebar} />,
@@ -64,7 +60,7 @@ export const sidebarItemData: sidebarItem[] = [
                         path: '/management/products/addNewProduct',
                     },
                     {
-                        title: 'Add Recomment Product',
+                        title: 'Add Recommend Product',
                         path: '/management/products/addRecomentProduct',
                     },
                 ],

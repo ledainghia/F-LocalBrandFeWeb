@@ -4,6 +4,7 @@ import HeaderOfTable from '@/components/datatables/headerOfTable';
 import IconBell from '@/components/icon/icon-bell';
 import Loading from '@/components/layouts/loading';
 import { Badge } from '@/components/ui/badge';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +40,15 @@ const Customers = () => {
         queryFn: () => managementAPI.getCustomers(filter),
     });
 
+    const changeStatusCustomer = async (id: string, status: 'Active' | 'Inactive') => {
+        const res = await managementAPI.changeStatusCustomer(id, status);
+        if (res.data.success) {
+            queryClient.invalidateQueries({ queryKey: ['customers'] });
+            toast.success(res.data.message);
+        } else {
+            toast.error(res.data.message);
+        }
+    };
     const showAlert = async (userID: string, action: string, userName: string) => {
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -105,16 +115,13 @@ const Customers = () => {
                     render: (value) => {
                         return (
                             <div className="space-x-2">
-                                <Button variant="outline" size="sm">
-                                    <FaUserEdit className="h-4 w-4" />
-                                </Button>
                                 {value.status === 'Active' && (
-                                    <Button variant="outline" size="sm" onClick={() => showAlert(value.id, 'Deactive', value.userName)}>
+                                    <Button variant="destructive" size="sm" onClick={() => changeStatusCustomer(value.id, 'Inactive')}>
                                         <FaUserTimes className="h-4 w-4" />
                                     </Button>
                                 )}
                                 {value.status !== 'Active' && (
-                                    <Button variant="outline" size="sm">
+                                    <Button onClick={() => changeStatusCustomer(value.id, 'Active')} variant="destructive" size="sm">
                                         <FaUserCheck className="h-4 w-4" />
                                     </Button>
                                 )}
@@ -148,14 +155,18 @@ const Customers = () => {
 
     return (
         <div>
-            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
-                    <IconBell />
-                </div>
-                <span className="ltr:mr-3 rtl:ml-3">a</span>
-                <a href="https://www.npmjs.com/package/mantine-datatable" target="_blank" className="block hover:underline" rel="noreferrer">
-                    https://www.npmjs.com/package/mantine-datatable
-                </a>
+            <div className="panel">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Management</BreadcrumbPage>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Customers list</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
             </div>
             <div className="panel mt-6">
                 <div className="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
@@ -271,13 +282,6 @@ const Customers = () => {
                                 </PopoverClose>
                             </PopoverContent>
                         </Popover>
-                    </div>
-                    <div className="flex items-center gap-5">
-                        <div className="flex-1 md:flex-auto">
-                            <Button variant={'outline'}>
-                                <RiUserAddLine className="mr-2 h-4 w-4" /> Add new customer
-                            </Button>
-                        </div>
                     </div>
                 </div>
                 <DataTableCustom rowData={rowData} columns={columns} search={search} setSearch={setSearch} />

@@ -1,8 +1,7 @@
 'use client';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
 import sortBy from 'lodash/sortBy';
-import HeaderOfTable from './headerOfTable';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { use, useEffect, useState } from 'react';
 interface DataTableCustomProps {
     rowData: any;
     columns: any;
@@ -14,11 +13,13 @@ const DataTableCustom: React.FC<DataTableCustomProps> = ({ rowData, columns, sea
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [data, setData] = useState(rowData);
 
-    const [initialRecords, setInitialRecords] = useState(sortBy(data, 'id'));
-    const [recordsData, setRecordsData] = useState(initialRecords);
-    const [tempData, setTempData] = useState(initialRecords);
+    const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'id'));
+    const [dataFilter, setDataFilter] = useState(initialRecords);
+
+    useEffect(() => {
+        setInitialRecords(sortBy(rowData, 'id'));
+    }, [rowData]);
 
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
         columnAccessor: 'id',
@@ -26,14 +27,8 @@ const DataTableCustom: React.FC<DataTableCustomProps> = ({ rowData, columns, sea
     });
 
     useEffect(() => {
-        setData(rowData);
         setInitialRecords(sortBy(rowData, 'id'));
-        console.log('rowData', rowData);
     }, [rowData]);
-
-    useEffect(() => {
-        setRecordsData(initialRecords);
-    }, [initialRecords]);
 
     useEffect(() => {
         setPage(1);
@@ -42,12 +37,12 @@ const DataTableCustom: React.FC<DataTableCustomProps> = ({ rowData, columns, sea
     useEffect(() => {
         const from = (page - 1) * pageSize;
         const to = from + pageSize;
-        setRecordsData([...initialRecords.slice(from, to)]);
+        setDataFilter([...initialRecords.slice(from, to)]);
     }, [page, pageSize, initialRecords]);
 
     useEffect(() => {
-        setInitialRecords(() => {
-            return tempData.filter((item) => {
+        setDataFilter(() => {
+            return initialRecords.filter((item) => {
                 return Object.values(item).some((value) => {
                     if (typeof value === 'string' || typeof value === 'number') {
                         return value.toString().toLowerCase().includes(search.toLowerCase());
@@ -56,7 +51,6 @@ const DataTableCustom: React.FC<DataTableCustomProps> = ({ rowData, columns, sea
                 });
             });
         });
-        console.log('search', sortBy(rowData, 'id'));
     }, [search]);
 
     useEffect(() => {
@@ -70,7 +64,7 @@ const DataTableCustom: React.FC<DataTableCustomProps> = ({ rowData, columns, sea
             <DataTable
                 highlightOnHover
                 className="table-hover whitespace-nowrap"
-                records={recordsData}
+                records={dataFilter}
                 columns={columns}
                 totalRecords={initialRecords.length}
                 recordsPerPage={pageSize}

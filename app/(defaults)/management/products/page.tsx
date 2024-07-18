@@ -1,43 +1,18 @@
 'use client';
-import DataTableCustom from '@/components/datatables/data-table';
-import HeaderOfTable from '@/components/datatables/headerOfTable';
-import IconBell from '@/components/icon/icon-bell';
-import Loading from '@/components/layouts/loading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { managementAPI } from '@/config/axios/axios';
-import { cn } from '@/lib/utils';
-import { s } from '@fullcalendar/core/internal-common';
-import { PopoverClose } from '@radix-ui/react-popover';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { set } from 'lodash';
-import { DataTableColumn } from 'mantine-datatable';
-import Image from 'next/image';
-import { ChangeEvent, Key, useEffect, useState } from 'react';
-import { FaEdit, FaUserCheck, FaUserEdit, FaUserTimes } from 'react-icons/fa';
-import { MdLibraryAdd } from 'react-icons/md';
-import { RiDeleteBin5Fill, RiDeviceRecoverFill, RiUserAddLine } from 'react-icons/ri';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
-import { GoKebabHorizontal } from 'react-icons/go';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
+import { managementAPI } from '@/config/axios/axios';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { AiOutlineProduct } from 'react-icons/ai';
-import { ProductSize } from '@/datatype/productType';
-import FormWizard from 'react-form-wizard-component';
+import { GoKebabHorizontal } from 'react-icons/go';
+import { toast } from 'react-toastify';
 
-import { IoColorPaletteOutline, IoResizeSharp } from 'react-icons/io5';
-import { IoIosAddCircleOutline } from 'react-icons/io';
-import SizeColorComponent from './SizeColorComponent';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 type Product = {
     id: string;
     size: number;
@@ -62,18 +37,11 @@ type Product = {
 
 const Categories = () => {
     const [search, setSearch] = useState('');
-    const [categoryName, setCategoryName] = useState('' as string);
-
-    const [status, setStatus] = useState('' as string);
-
-    const [description, setDescription] = useState<string>('');
 
     const [products, setProducts] = useState<Product[] | null>(null);
+    const [productFilter, setProductFilter] = useState<Product[] | any>(null);
 
-    const [isAsc, setIsAsc] = useState('TRUE' as string);
     const [filter, setFilter] = useState('' as string);
-
-    const queryClient = useQueryClient();
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['products'],
@@ -85,17 +53,22 @@ const Categories = () => {
             toast.error('Error fetching data users');
         } else {
             setProducts(data?.data?.result?.products);
+            setProductFilter(data?.data?.result?.products);
         }
     }, [data]);
 
-    const handleApplyFilter = () => {
-        const filter = `CategoryName=${categoryName}&Description=${description}&Status=${status}`;
-        setFilter(filter);
-    };
-
     useEffect(() => {
-        queryClient.invalidateQueries({ queryKey: ['categories'] });
-    }, [filter]);
+        setProductFilter(() => {
+            return products?.filter((item) => {
+                return Object.values(item).some((value) => {
+                    if (typeof value === 'string' || typeof value === 'number') {
+                        return value.toString().toLowerCase().includes(search.toLowerCase());
+                    }
+                    return false;
+                });
+            });
+        });
+    }, [search]);
 
     if (isLoading) {
         return (
@@ -124,94 +97,6 @@ const Categories = () => {
                 <div className="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
                     <div className="flex items-center gap-5 ltr:mr-auto rtl:ml-auto">
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline">Custom filter</Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80 bg-white">
-                                <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                        <h4 className="font-bold leading-none">Filter</h4>
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="categoryName">Category Name</Label>
-                                            <Input
-                                                id="collectionName"
-                                                defaultValue={categoryName}
-                                                onChange={(e) => {
-                                                    setCategoryName(e.target.value);
-                                                }}
-                                                placeholder=""
-                                                className="col-span-2 h-8"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="Description">Description</Label>
-                                            <Input
-                                                id="Description"
-                                                defaultValue={description}
-                                                onChange={(e) => {
-                                                    setDescription(e.target.value);
-                                                }}
-                                                className="col-span-2 h-8"
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="status">Status</Label>
-                                            <Select value={status} onValueChange={setStatus}>
-                                                <SelectTrigger className="col-span-2 h-8">
-                                                    <SelectValue placeholder="Is Active" />
-                                                </SelectTrigger>
-                                                <SelectContent id="status" className="bg-white">
-                                                    <SelectGroup>
-                                                        <SelectLabel>Active / Inactive</SelectLabel>
-                                                        <SelectItem value="Active">Active</SelectItem>
-                                                        <SelectItem value="Inactive">Inactive</SelectItem>
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="isAsc">Is Ascending</Label>
-                                            <Select value={isAsc} onValueChange={setIsAsc}>
-                                                <SelectTrigger className="col-span-2 h-8">
-                                                    <SelectValue placeholder="Is Ascending?" />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-white">
-                                                    <SelectGroup>
-                                                        <SelectLabel>TRUE / FALSE</SelectLabel>
-                                                        <SelectItem value="true">TRUE</SelectItem>
-                                                        <SelectItem value="false">FALSE</SelectItem>
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <PopoverClose className="mt-4 w-full">
-                                    <div className="flex w-full space-x-2">
-                                        <Button
-                                            variant={'outline'}
-                                            className="w-full"
-                                            onClick={() => {
-                                                setCategoryName('');
-                                                setDescription('');
-                                                setStatus('');
-                                                setIsAsc('');
-                                                setFilter('');
-                                            }}
-                                        >
-                                            Reset filter
-                                        </Button>
-                                        <Button className="w-full text-white" onClick={handleApplyFilter}>
-                                            Apply this filter
-                                        </Button>
-                                    </div>
-                                </PopoverClose>
-                            </PopoverContent>
-                        </Popover>
                     </div>
                     <div className="flex items-center gap-5">
                         <div className="flex-1 md:flex-auto">
@@ -222,8 +107,8 @@ const Categories = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-12 gap-4">
-                    {products && products.length > 0 ? (
-                        products.map((product) => (
+                    {productFilter && productFilter.length > 0 ? (
+                        productFilter.map((product: any) => (
                             <Card className="col-span-12 rounded-t-lg lg:col-span-6 xl:col-span-4 2xl:col-span-3" key={product.id}>
                                 <CardHeader className="rounded-t-lg p-0 pb-5">
                                     <div className="relative w-full">
@@ -253,12 +138,13 @@ const Categories = () => {
                                         </div>
                                         <CardDescription className="mt-2">{product.description}</CardDescription>
                                         <Separator className="mt-2" />
-                                        <div className="mt-4 grid grid-cols-4 space-x-3">
+                                        <div className="mt-4 grid grid-cols-4 gap-3">
                                             <div className="col-span-2">
                                                 <p>ID:</p>
                                                 <p>Stock quantity:</p>
                                                 <p>Gender:</p>
                                                 <p>Size:</p>
+                                                <p>Price:</p>
                                                 <p>Color:</p>
                                                 <p>Category:</p>
                                                 <p>Campaign:</p>
@@ -268,9 +154,26 @@ const Categories = () => {
                                                 <p>{product.stockQuantity}</p>
                                                 <p>{product.gender}</p>
                                                 <p>{product.size}</p>
+                                                <p>{product.price}</p>
                                                 <p>{product.color}</p>
                                                 <p>{product.category.categoryName}</p>
                                                 <p>{product.campaign.campaignName}</p>
+                                            </div>
+                                            <Separator className="col-span-4" />
+
+                                            <div className="relative col-span-4 mt-1 flex flex-col gap-2 rounded-sm  border-2 border-dashed border-[#16a34a] py-3">
+                                                <p className="absolute -top-4 left-0 bg-white p-1">Recommend Product</p>
+                                                {product.productsRecommendation && product.productsRecommendation.length > 0 ? (
+                                                    product.productsRecommendation.map((pr: any) => (
+                                                        <Badge className="rounded-sm" variant={'outline'}>
+                                                            {pr.productName} - {pr.size} - {pr.color}
+                                                        </Badge>
+                                                    ))
+                                                ) : (
+                                                    <Badge className="rounded-sm" variant={'outline'}>
+                                                        No Recommend Product
+                                                    </Badge>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
