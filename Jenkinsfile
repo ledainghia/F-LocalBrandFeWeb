@@ -5,16 +5,10 @@ pipeline {
         stage('Packaging') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-                    string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
-                    string(credentialsId: 'NEXTAUTH_SECRET', variable: 'NEXTAUTH_SECRET'),
-                    string(credentialsId: 'NEXT_PUBLIC_BASE_URL', variable: 'NEXT_PUBLIC_BASE_URL')
+                    string(credentialsId: 'NEXT_PUBLIC_MEASUREMENT_ID', variable: 'NEXT_PUBLIC_MEASUREMENT_ID'),
                 ]) {
                     sh '''
-                        docker build --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-                                     --build-arg CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
-                                     --build-arg SECRET_KEY=${NEXTAUTH_SECRET} \
-                                     --pull --rm -f Dockerfile -t flocalbrandfeweb:latest .
+                        docker build --pull --rm -f Dockerfile -t flocalbrandfeweb:latest .
                     '''
                 }
             }
